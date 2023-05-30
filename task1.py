@@ -3,35 +3,26 @@ import cv2  # Install opencv-python
 import numpy as np
 
 class Task1:
-    def __init__(self):
+    def __init__(self,cam):
         print("Initi task1")
-        # Disable scientific notation for clarity
+         # Disable scientific notation for clarity
         np.set_printoptions(suppress=True)
         # Load the model
-        model = load_model("keras_Model.h5", compile=False)
+        self.model = load_model("keras_Model.h5", compile=False)
 
         # Load the labels
-        class_names = open("labels.txt", "r").readlines()
+        self.class_names = open("labels.txt", "r").readlines()
 
         # CAMERA can be 0 or 1 based on default camera of your computer
-        camera = cv2.VideoCapture(0)
+        self.camera = cv2.VideoCapture(cam)
         return
 
     def Task1Run(self):
         print("Task1 is activated")
 
-        # Disable scientific notation for clarity
-        np.set_printoptions(suppress=True)
-        # Load the model
-        model = load_model("keras_Model.h5", compile=False)
 
-        # Load the labels
-        class_names = open("labels.txt", "r").readlines()
-
-        # CAMERA can be 0 or 1 based on default camera of your computer
-        camera = cv2.VideoCapture(0)
         # Grab the webcamera's image.
-        ret, image = camera.read()
+        ret, image = self.camera.read()
 
         # Resize the raw image into (224-height,224-width) pixels
         image = cv2.resize(image, (224, 224), interpolation=cv2.INTER_AREA)
@@ -46,9 +37,9 @@ class Task1:
         image = (image / 127.5) - 1
 
         # Predicts the model
-        prediction = model.predict(image)
+        prediction = self.model.predict(image)
         index = np.argmax(prediction)
-        class_name = class_names[index]
+        class_name = self.class_names[index]
         confidence_score = prediction[0][index]
 
         # Print prediction and confidence score
@@ -63,5 +54,6 @@ class Task1:
         # if keyboard_input == 27:
         #     break
 
-        camera.release()
+        self.camera.release()
         cv2.destroyAllWindows()
+        return
